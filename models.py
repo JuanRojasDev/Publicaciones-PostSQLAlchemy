@@ -1,7 +1,6 @@
 from sqlalchemy import Boolean, Integer, Column, ForeignKey, String, Table, MetaData
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
-from pydantic import BaseModel, Field
 
 Base = declarative_base()
 
@@ -22,8 +21,6 @@ class Item(Base):
     is_offer = Column(Boolean)
     orders = relationship("Order", secondary="order_items", back_populates="items")
 
-    class PydanticConfig:
-        orm_mode = True
 
 class Client(Base):
     __tablename__ = 'clients'
@@ -40,15 +37,3 @@ class Order(Base):
     client_id = Column(Integer, ForeignKey('clients.id'))
     client = relationship("Client", back_populates="orders")
     items = relationship("Item", secondary="order_items", back_populates="orders")
-
-    class PydanticConfig:
-        orm_mode = True
-
-class ItemInResponse(BaseModel):
-    id: int
-    name: str
-    price: int
-    is_offer: bool
-
-    class Config:
-        orm_mode = True

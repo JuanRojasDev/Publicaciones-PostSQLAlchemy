@@ -37,18 +37,33 @@ db_dependency = Annotated[Session, Depends(get_db)]
 
 @app.post("/order/")
 async def create_order(order: OrderBase, db: db_dependency):
-    # Verifica si el cliente existe en la base de datos
-    db_client = db.query(models.Client).filter_by(id=order.client.id).first()
+        # Verifica si el cliente existe en la base de datos
+        db_client = db.query(models.Client).filter_by(id=order.client.id).first()
 
-    if not db_client:
-        # Si el cliente no existe, crea uno nuevo
-        db_client = models.Client(name=order.client.name, phone=order.client.phone)
-        db.add(db_client)
+        if not db_client:
+            # Si el cliente no existe, crea uno nuevo
+            db_client = models.Client(name=order.client.name, phone=order.client.phone)
+            db.add(db_client)
+            db.commit()
+            db.refresh(db_client)
+
+        # Verifica si los items existen en la base de datos
+        db_items = []
+        for item in order.items:
+            db_item = db.query(models.Item).filter_by(id=item.id).first()
+            if not db_item:
+                # Si el item no existe, crea uno nuevo
+                db_item = models.Item(name=item.name, price=item.price)
+                db.add(db_item)
+                db.commit()
+                db.refresh(db_item)
+            db_items.append(db_item)
+
+        # Crea la nueva orden asociada con el cliente y los items
+        db_order = models.Order(client_id=db_client.id, items=db_items)
+        db.add(db_order)
         db.commit()
-        db.refresh(db_client)
+        db.refresh(db_order)
 
-    # Crea la nueva orden asociada con el cliente
-    db_order = models.Order(client_id=db_client.id)
-    db.add(db_order)
-    db.commit()
-    db.refresh(db_order)
+        return db_order
+    
