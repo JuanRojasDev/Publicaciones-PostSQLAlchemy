@@ -13,13 +13,19 @@ https://obikastanya.medium.com/create-completed-restfull-api-with-flask-sql-alch
 ## Activar venv (Linux): 
 
 ```json
-{"env/bin/activate"}
+{".env.publish/bin/activate"}
 ```
 
 ## Activar venv (Windows): 
 
 ```json
-{".env/Scripts/activate"}
+{".env.publish/Scripts/activate"}
+```
+
+## Crear venv si no lo tienes (Windows): 
+
+```json
+{"python -m venv .env-publish"}
 ```
 
 ## run (Windows):
