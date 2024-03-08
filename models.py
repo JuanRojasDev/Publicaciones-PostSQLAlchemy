@@ -1,28 +1,54 @@
-from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import Boolean, Integer, Column, ForeignKey, String, Table, MetaData
+from sqlalchemy.orm import relationship
+from sqlalchemy.ext.declarative import declarative_base
+from pydantic import BaseModel, Field
 
-db = SQLAlchemy()
+Base = declarative_base()
 
-class publicaciones(db.Model):
-    # __tablename__ = 'publicaciones'
-    id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.Text)
-    content = db.Column(db.Text)
-    category = db.Column(db.Text)
-    images = db.Column(db.ARRAY(db.Text))
-    videos = db.Column(db.ARRAY(db.Text))
-    owner = db.Column(db.Integer)
-    created_at = db.Column(db.Date)
-    update_at = db.Column(db.Date)
-    
-    def __init__(self, title, content, category, images, videos, owner, created_at, update_at=None):
-        self.title = title
-        self.content = content
-        self.category = category
-        self.images = images
-        self.videos = videos
-        self.owner = owner
-        self.created_at = created_at
-        self.update_at = update_at
+metadata = MetaData()
 
-    def __repr__(self):
-        return f'<Publi {self.title}>'
+class OrderItem(Base):
+    __tablename__ = 'order_items'
+    order_id = Column(Integer, ForeignKey('orders.id'), primary_key=True)
+    item_id = Column(Integer, ForeignKey('items.id'), primary_key=True)
+
+
+class Item(Base):
+    __tablename__ = 'items'
+
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    name = Column(String, index=True)
+    price = Column(Integer)
+    is_offer = Column(Boolean)
+    orders = relationship("Order", secondary="order_items", back_populates="items")
+
+    class PydanticConfig:
+        orm_mode = True
+
+class Client(Base):
+    __tablename__ = 'clients'
+
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    name = Column(String, index=True)
+    phone = Column(String)
+    orders = relationship("Order", back_populates="client")
+
+
+class Order(Base):
+    __tablename__ = 'orders'
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    client_id = Column(Integer, ForeignKey('clients.id'))
+    client = relationship("Client", back_populates="orders")
+    items = relationship("Item", secondary="order_items", back_populates="orders")
+
+    class PydanticConfig:
+        orm_mode = True
+
+class ItemInResponse(BaseModel):
+    id: int
+    name: str
+    price: int
+    is_offer: bool
+
+    class Config:
+        orm_mode = True
