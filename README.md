@@ -10,10 +10,11 @@ Pgadmin web mode: http://127.0.0.1/pgadmin4
 
 https://obikastanya.medium.com/create-completed-restfull-api-with-flask-sql-alchemy-and-jwt-as-authenticator-4edd3f8f26b7
 
-# Activar venv (Linux): 
+### Activar venv (Linux): 
 
-'env/bin/activate'
-
+```json
+{env/bin/activate}
+```
 # Activar venv (Windows): .env/Scripts/activate
 
 # run (Windows): uvicorn main:app --reload
