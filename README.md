@@ -15,9 +15,18 @@ https://obikastanya.medium.com/create-completed-restfull-api-with-flask-sql-alch
 ```json
 {"env/bin/activate"}
 ```
-# Activar venv (Windows): .env/Scripts/activate
 
-# run (Windows): uvicorn main:app --reload
+### Activar venv (Windows): 
+
+```json
+{".env/Scripts/activate"}
+```
+
+# run (Windows):
+
+```json
+{"uvicorn main:app --reload"}
+```
 
 # Corrección del error de violación de clave externa
 
