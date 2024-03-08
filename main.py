@@ -57,13 +57,17 @@ async def create_order(order: OrderBase, db: db_dependency):
                 db.add(db_item)
                 db.commit()
                 db.refresh(db_item)
-            db_items.append(db_item)
+                db_items.append(db_item.id)
+            else:
+                # Si el ítem existe, simplemente guarda su ID
+                db_items.append(db_item.id)
 
         # Crea la nueva orden asociada con el cliente y los items
         db_order = models.Order(client_id=db_client.id, items=db_items)
         db.add(db_order)
         db.commit()
         db.refresh(db_order)
+        
 
         return db_order
     
